@@ -24,7 +24,32 @@ var uid;
 var dead;
 var button;
 var client;
-var token;
+var token = '0WL9ijeNmFAtGefNCgVIc8qOr0kG6zgWkRTqZX4brstXwyyWChuEdLgvBqZvO5iW'
+
+function controls() {
+  if(keyDown(UP_ARROW)) {
+    ship.addSpeed(0.2, ship.rotation-90)
+    send({mode:'fly'})
+  }
+  if(keyDown(LEFT_ARROW)) {
+    ship.rotation-=4
+    send({mode:'turn', angle:-4})
+
+  }
+  if(keyDown(RIGHT_ARROW)) {
+    ship.rotation+=4
+    send({mode:'turn', angle:+4})
+
+  }
+  if(keyWentDown(32)) {
+    let x = ship.position.x
+    let y = ship.position.y
+    let r = ship.rotation
+    fireLaser(x,y,r,lasers)
+    send({mode:'fire', x, y, r})
+
+  }
+}
 
 function setup() {
   uid = randomString()
@@ -32,13 +57,21 @@ function setup() {
   createCanvas(window.innerWidth, window.innerHeight)
   background(0)
 
+  stroke(2555)
+  for(let i=0; i<1000; i++) {
+    stars.push([
+      random(width),
+      random(height)
+    ])
+  }
+
   shipImage = loadImage(pic)
   laserImage = loadImage(bullet)
 
   lasers = new Group()
   enemyLasers = new Group()
 
-  // ship = makeShip(random(width), random(height))
+  ship = makeShip(random(width), random(height))
   
   if(token) connectToFlespi()
   
@@ -56,6 +89,10 @@ function setup() {
 } // end setup function
 
 function draw() {
+  background(0)
+  for(let i=0; i<1000; i++) {
+    point(stars[i][0], stars[i][1])
+  }
   
   if(typeof controls==='function') controls()
 
